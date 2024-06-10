@@ -2,6 +2,8 @@
 import React, { useState, useRef } from 'react';
 import Image from 'next/image';
 import { CiMapPin } from "react-icons/ci";
+// import {Montserrat} from "next/font/google"
+import {motion} from "framer-motion"
 
 type Destination = {
   id: number,
@@ -19,16 +21,18 @@ type DestinationItemProps = {
   onDrop: any,
   isDragging: boolean
   hoveredItem:boolean
+  delay:number
 };
 
-const DestinationItem: React.FC<DestinationItemProps> = ({ destination, onDragStart, onDragOver, onDrop, isDragging,hoveredItem }) => {
+const DestinationItem: React.FC<DestinationItemProps> = ({ destination, onDragStart, onDragOver, onDrop, isDragging,hoveredItem,delay }) => {
   const customDragRef = useRef<HTMLDivElement>(null);
 
   return (
-    <li
-    className="relative overflow-hidden">
+    <motion.li
+    initial={{ scaleX: 0 }} animate={{ scaleX:1}} transition={{type:"spring",delay }}
+    className="relative">
       <div id="card-content"
-           className={`overflow-hidden relative cursor-grab rounded-3xl ${isDragging ? "bg-gray-400" : "bg-gray-300"} flex items-center justify-start gap-5 p-2.5 my-2 ${hoveredItem && 'border-b-4 border-sky-500'}`}
+           className={`overflow-hidden relative cursor-grab rounded-3xl ${isDragging ? "bg-gray-400" : "bg-gray-300"} flex items-center justify-start gap-5 p-2 my-4 ${hoveredItem && 'border-b-4 border-sky-500'} shadow-md shadow-sky-200`}
            draggable
            onDragStart={(e) => {
             onDragStart(e, destination);
@@ -44,11 +48,12 @@ const DestinationItem: React.FC<DestinationItemProps> = ({ destination, onDragSt
 
 
       >
-      <div className="cursor-none pointer-events-none">
+      <div className="cursor-none pointer-events-none overflow-hidden">
         <Image
           src={destination.img}
           width={100}
           height={100}
+          className={`transition ease-in-out ${isDragging ? 'opacity-20' : 'opacity-100'} ${hoveredItem ? 'scale-125' :'scale-100'}`}
           alt="destination"
         />
       </div>
@@ -69,9 +74,17 @@ const DestinationItem: React.FC<DestinationItemProps> = ({ destination, onDragSt
          <h5 className="font-bold">{destination.name}</h5>
       </div>
     </div>
-    </li>
+    </motion.li>
   );
 };
+
+
+// const inter = Montserrat({
+//   weight:"500",
+
+//   subsets: ['latin'],
+//   display: 'swap',
+// })
 
 export default function Home() {
   const [destinations, setDestinations] = useState<Destination[]>([
@@ -89,9 +102,7 @@ export default function Home() {
 
   const handleDragStart = (event: React.DragEvent<HTMLElement>, destination: Destination) => {
     setDraggingItem(destination);
-    // event.dataTransfer.setData('text/plain', JSON.stringify(destination));
-
-    // console.log("drag started!!!",destination.name)
+ 
 
  
   };
@@ -117,11 +128,15 @@ export default function Home() {
   };
 
   return (
-    <main className="flex items-center justify-center flex-column bg-gray-200 min-h-screen border-solid border-4 border-black p-3">
-      <section className="border-white w-full md:w-1/2">
-        <h2 className="text-color-black text-5xl uppercase font-bold text-center">
+    <motion.main initial={{ translateY: '-100%' }} animate={{ translateY:"0%" }} transition={{type:"spring" }} className={`min-h-screen border-solid p-4 bg-black`}>
+      <header className="text-center relative flex items-center justify-center bg-sky-500 w-full lg:w-1/2 m-auto rounded">
+          <h1 className="text-xl text-white z-10">draggable</h1>
+          <h1 className="text-2xl text-color-black md:text-5xl uppercase text-white font-bold p-2 relative z-10" style={{textShadow:'1px 1px 1px black'}}> 
           Destinations
-        </h2>
+          </h1>
+
+      </header>
+      <section className="border-white w-full lg:w-1/2 py-7 m-auto">
         <ul id="destination-items">
           {destinations.map(destination => (
             <DestinationItem
@@ -132,11 +147,16 @@ export default function Home() {
               onDragOver={handleDragOver}
               onDrop={handleDrop}
               isDragging={draggingItem?.id === destination.id}
+              delay={destination.id/3}
             />
           ))}
         </ul>
+     
       </section>
+      <footer className="text-center">
+          <a target="_blank" className="text-sky-500 bg-gray-300 p-1 px-5 rounded" href="https://jgreen721dev.com">JGDev721</a>
+      </footer>
     
-    </main>
+    </motion.main>
   );
 }
