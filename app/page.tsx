@@ -117,8 +117,11 @@ export default function Home() {
   };
 
   return (
-    <main className="flex items-center justify-center flex-column bg-gray-200 min-h-screen border-solid border-4 border-black">
-      <section className="border-white w-1/2">
+    <main className="flex items-center justify-center flex-column bg-gray-200 min-h-screen border-solid border-4 border-black p-3">
+      <section className="border-white w-full md:w-1/2">
+        <h2 className="text-color-black text-5xl uppercase font-bold text-center">
+          Destinations
+        </h2>
         <ul id="destination-items">
           {destinations.map(destination => (
             <DestinationItem
